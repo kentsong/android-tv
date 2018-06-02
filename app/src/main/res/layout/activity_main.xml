@@ -78,11 +78,32 @@
     <com.example.kent.tv_view_focus.view.SelectionView
         android:id="@+id/selectionView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
     </com.example.kent.tv_view_focus.view.SelectionView>
 
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Channel 列表"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_channel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
+
+
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Selection 列表"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
 
 
 </LinearLayout>

@@ -44,18 +44,13 @@ public class LabelView extends TextView{
         init();
     }
 
-    public LabelView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
         setFocusable(true);
         setFocusableInTouchMode(true);
         setGravity(Gravity.CENTER);
         setTextSize(TypedValue.COMPLEX_UNIT_PX, 30);
         setTextColor(getResources().getColor(R.color.colorPrimary));
-//        setBackgroundResource(R.drawable.labelview_bg);
+        setBackgroundColor(getResources().getColor(R.color.unfocus_bg));
 
         setOnClickListener(new OnClickListener() {
             @Override
@@ -74,6 +69,8 @@ public class LabelView extends TextView{
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
+        isSelected = selected;
+        onStateChange();
     }
 
     @Override
@@ -81,13 +78,16 @@ public class LabelView extends TextView{
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         Log.d("LabelView", ">> Item "+getText()+", onFocusChanged focused = "+focused+", direction = "+direction );
         if(focused){
-            setTextColor(getResources().getColor(R.color.colorAccent));
+            setTextColor(getResources().getColor(R.color.focus));
+            setBackgroundColor(getResources().getColor(R.color.focus_bg));
         } else{
 
             if(isSelected){
-                setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                setTextColor(getResources().getColor(R.color.colorAccent));
+                setBackgroundColor(getResources().getColor(R.color.unfocus_bg));
             }else{
                 setTextColor(getResources().getColor(R.color.colorPrimary));
+                setBackgroundColor(getResources().getColor(R.color.unfocus_bg));
             }
 
         }
@@ -97,20 +97,25 @@ public class LabelView extends TextView{
 
 
     public void onFocusChanged(boolean focused) {
-        Log.d("LabelView", ">> Item "+getText()+", onFocusChanged focused = "+focused );
-        if (focused) {
-            setTextColor(getResources().getColor(R.color.colorAccent));
-            isFocused = true;
-        } else {
+        isFocused = focused;
+        onStateChange();
 
+    }
+
+    private void onStateChange(){
+        Timber.d(">> Item "+getText()+", onStateChange isFocused = %s, isSelected = %s",isFocused,  isSelected);
+        if (isFocused) {
+            setTextColor(getResources().getColor(R.color.focus));
+            setBackgroundColor(getResources().getColor(R.color.focus_bg));
+        } else {
             if (isSelected) {
-                setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                setTextColor(getResources().getColor(R.color.colorAccent));
+                setBackgroundColor(getResources().getColor(R.color.unfocus_bg));
             } else {
                 setTextColor(getResources().getColor(R.color.colorPrimary));
+                setBackgroundColor(getResources().getColor(R.color.unfocus_bg));
             }
-            isFocused = false;
         }
-
     }
 
     public void onSelected(){
