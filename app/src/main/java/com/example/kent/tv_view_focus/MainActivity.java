@@ -1,6 +1,5 @@
 package com.example.kent.tv_view_focus;
 
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +14,6 @@ import com.example.kent.tv_view_focus.feature1.OnKeyDownListener;
 import com.example.kent.tv_view_focus.feature1.SelectionAdapter;
 import com.example.kent.tv_view_focus.feature1.SelectionRecyclerView;
 import com.example.kent.tv_view_focus.utils.TimerManager;
-import com.example.kent.tv_view_focus.view.LabelView;
 import com.example.kent.tv_view_focus.view.SelectionView;
 
 import java.util.ArrayList;
@@ -61,8 +59,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        mTimerManager = new TimerManager();
+        initChaneel();
+        initSelection();
+    }
 
+    private void initChaneel(){
         cAdpater = new ChannelAdapter(generateChannel());
         cAdpater.setOnItemFocusListener(new OnItemFocusListener() {
             @Override
@@ -95,15 +96,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mSelectionLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-
         rvChannel.setLayoutManager(mLinearLayoutManager);
         rvChannel.setAdapter(cAdpater);
-        rvChannel.setOnScrollListener(new RecyclerViewListener() {
-        });
+        rvChannel.addOnScrollListener(new RecyclerViewListener() {});
         rvChannel.scrollToPosition(mLastChannelPos);
+    }
+
+    private void initSelection(){
+        mTimerManager = new TimerManager();
+
+        mSelectionLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
         sAdapter = new SelectionAdapter(generateSelection());
         sAdapter.setOnItemFocusListener(new OnItemFocusListener() {
@@ -121,8 +124,10 @@ public class MainActivity extends AppCompatActivity {
         rvSelection.setLayoutManager(mSelectionLayoutManager);
         rvSelection.setAdapter(sAdapter);
         rvSelection.scrollToPosition(mLastSlectionPos);
-
     }
+
+
+
 
     private List<String> generateChannel() {
         List<String> list = new ArrayList<>();
@@ -148,17 +153,11 @@ public class MainActivity extends AppCompatActivity {
         return list;
     }
 
-    private void test() {
-        View focusedChild = mLinearLayoutManager.getFocusedChild();
-        if (focusedChild == null) {
-            int first = mLinearLayoutManager.findFirstVisibleItemPosition();
-            View view = mLinearLayoutManager.findViewByPosition(first);
-            view.requestFocus();
-        } else {
-            focusedChild.requestFocus();
-        }
-    }
 
+    /**
+     * 先用scrollToPosition，将要置左的项先移动显示出来，然后计算这一项离第一項的距离，用 scrollBy 完成！
+     * @param n
+     */
     private void moveToPosition(final int n) {
         runOnUiThread(new Runnable() {
             @Override
@@ -169,24 +168,23 @@ public class MainActivity extends AppCompatActivity {
                 int lastItem = mLinearLayoutManager.findLastVisibleItemPosition();
                 Timber.d(">> moveToPosition findFirstVisibleItemPosition = %s, findLastVisibleItemPosition = %s", firstItem, lastItem);
                 if (n <= firstItem) {
+                    //当要置左的项在当前显示的第一个项的前面时
                     Timber.d(">>  rvChannel.scrollToPosition(%s)", n);
                     rvChannel.smoothScrollToPosition(n);
-//            rvChannel.smoothScrollToPosition(n);
                 } else if (n <= lastItem) {
+                    //当要置左的项已经在屏幕上显示时
                     int left = rvChannel.getChildAt(n - firstItem).getLeft();
                     Timber.d(">>  rvChannel.scrollBy(%s, 0);", left);
                     rvChannel.scrollBy(left, 0);
-//                    rvChannel.smoothScrollBy(left, 0);
                 } else {
+                    //当要置左的项在当前显示的最后一项的后面时
                     Timber.d(">>  else scrollToPosition(%s)", n);
                     rvChannel.scrollToPosition(n);
-//                    rvChannel.smoothScrollToPosition(n);
+                    //这里这个变量是用在RecyclerView滚动监听里面的
                     mMove = true;
                 }
             }
         });
-
-
     }
 
     class RecyclerViewListener extends RecyclerView.OnScrollListener {
@@ -202,12 +200,12 @@ public class MainActivity extends AppCompatActivity {
             Timber.d(">>  RecyclerViewListener onScrolled dx = %s, dy = %s", dx, dy);
             if (mMove) {
                 mMove = false;
+                //获取要置左的项在当前屏幕的位置，mIndex是记录的要置左项在RecyclerView中的位置
                 int n = mIndex - mLinearLayoutManager.findFirstVisibleItemPosition();
                 if (0 <= n && n < rvChannel.getChildCount()) {
                     final int left = rvChannel.getChildAt(n).getLeft();
                     Timber.d(">>  left = %s", left);
                     rvChannel.smoothScrollBy(left, 0);
-//                    rvChannel.scrollBy(left, 0);
 
                 }
             }
@@ -232,10 +230,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             moveToPosition(mIndex);
-        }
-
-        public int getIndex() {
-            return mIndex;
         }
     }
 }
