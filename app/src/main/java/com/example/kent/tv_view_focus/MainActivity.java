@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     TimerManager mTimerManager;
 
+    private int mLastChannelPos = 80;
+    private int mLastSlectionPos = 10;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         cAdpater.setOnItemFocusListener(new OnItemFocusListener() {
             @Override
             public void onItemFocus(View view, int position) {
+                mLastChannelPos = position;
                 String str = ((TextView) view).getText().toString();
                 int pos = Integer.parseInt(str);
                 int sPosition = (pos - 1) / 10;
@@ -99,33 +103,30 @@ public class MainActivity extends AppCompatActivity {
         rvChannel.setAdapter(cAdpater);
         rvChannel.setOnScrollListener(new RecyclerViewListener() {
         });
+        rvChannel.scrollToPosition(mLastChannelPos);
 
         sAdapter = new SelectionAdapter(generateSelection());
         sAdapter.setOnItemFocusListener(new OnItemFocusListener() {
             @Override
             public void onItemFocus(View view, int position) {
+                mLastSlectionPos = position;
                 Timber.d(">> sAdapter onItemFocus position = %s", position);
                 String str = ((TextView) view).getText().toString();
                 final int pos = Integer.parseInt(str.split("-")[0]) - 1;
                 cAdpater.setPosition(pos);
                 mTimerManager.addTask(new ChannelLoadTask(pos));
-//                new Handler().postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        moveToPosition(pos);
-//                    }
-//                },300);
 
             }
         });
         rvSelection.setLayoutManager(mSelectionLayoutManager);
         rvSelection.setAdapter(sAdapter);
+        rvSelection.scrollToPosition(mLastSlectionPos);
 
     }
 
     private List<String> generateChannel() {
         List<String> list = new ArrayList<>();
-        for (int i = 1; i < 100; i++) {
+        for (int i = 1; i <= 110; i++) {
             list.add("" + i);
         }
         return list;
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         list.add("71-80");
         list.add("81-90");
         list.add("91-100");
+        list.add("101-110");
         return list;
     }
 
