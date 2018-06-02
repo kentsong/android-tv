@@ -14,11 +14,13 @@ import com.example.kent.tv_view_focus.feature1.OnItemFocusListener;
 import com.example.kent.tv_view_focus.feature1.OnKeyDownListener;
 import com.example.kent.tv_view_focus.feature1.SelectionAdapter;
 import com.example.kent.tv_view_focus.feature1.SelectionRecyclerView;
+import com.example.kent.tv_view_focus.utils.TimerManager;
 import com.example.kent.tv_view_focus.view.LabelView;
 import com.example.kent.tv_view_focus.view.SelectionView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean mMove = false;
     private int mIndex = 0;
 
+    TimerManager mTimerManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+        mTimerManager = new TimerManager();
 
         cAdpater = new ChannelAdapter(generateChannel());
         cAdpater.setOnItemFocusListener(new OnItemFocusListener() {
@@ -103,12 +108,13 @@ public class MainActivity extends AppCompatActivity {
                 String str = ((TextView) view).getText().toString();
                 final int pos = Integer.parseInt(str.split("-")[0]) - 1;
                 cAdpater.setPosition(pos);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        moveToPosition(pos);
-                    }
-                },300);
+                mTimerManager.addTask(new ChannelLoadTask(pos));
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        moveToPosition(pos);
+//                    }
+//                },300);
 
             }
         });
@@ -151,26 +157,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void moveToPosition(int n) {
-        mIndex = n;
+    private void moveToPosition(final int n) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mIndex = n;
 
-        int firstItem = mLinearLayoutManager.findFirstVisibleItemPosition();
-        int lastItem = mLinearLayoutManager.findLastVisibleItemPosition();
-        Timber.d(">> moveToPosition findFirstVisibleItemPosition = %s, findLastVisibleItemPosition = %s", firstItem, lastItem);
-        if (n <= firstItem) {
-            Timber.d(">>  rvChannel.scrollToPosition(%s)", n);
-            rvChannel.smoothScrollToPosition(n);
+                int firstItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+                int lastItem = mLinearLayoutManager.findLastVisibleItemPosition();
+                Timber.d(">> moveToPosition findFirstVisibleItemPosition = %s, findLastVisibleItemPosition = %s", firstItem, lastItem);
+                if (n <= firstItem) {
+                    Timber.d(">>  rvChannel.scrollToPosition(%s)", n);
+                    rvChannel.smoothScrollToPosition(n);
 //            rvChannel.smoothScrollToPosition(n);
-        } else if (n <= lastItem) {
-            int left = rvChannel.getChildAt(n - firstItem).getLeft();
-            Timber.d(">>  rvChannel.scrollBy(%s, 0);", left);
-            rvChannel.scrollBy(left, 0);
-        } else {
-            Timber.d(">>  else scrollToPosition(%s)", n);
-            rvChannel.scrollToPosition(n);
-//            rvChannel.smoothScrollToPosition(n);
-            mMove = true;
-        }
+                } else if (n <= lastItem) {
+                    int left = rvChannel.getChildAt(n - firstItem).getLeft();
+                    Timber.d(">>  rvChannel.scrollBy(%s, 0);", left);
+                    rvChannel.scrollBy(left, 0);
+//                    rvChannel.smoothScrollBy(left, 0);
+                } else {
+                    Timber.d(">>  else scrollToPosition(%s)", n);
+                    rvChannel.scrollToPosition(n);
+//                    rvChannel.smoothScrollToPosition(n);
+                    mMove = true;
+                }
+            }
+        });
+
 
     }
 
@@ -192,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                     final int left = rvChannel.getChildAt(n).getLeft();
                     Timber.d(">>  left = %s", left);
                     rvChannel.smoothScrollBy(left, 0);
-//                    rvChannel.scrollBy(left, 0); 有 bug
+//                    rvChannel.scrollBy(left, 0);
 
                 }
             }
@@ -203,5 +216,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+
+    public class ChannelLoadTask extends TimerTask {
+
+        private int mIndex;
+
+        ChannelLoadTask(int index) {
+            this.mIndex = index;
+        }
+
+        @Override
+        public void run() {
+            moveToPosition(mIndex);
+        }
+
+        public int getIndex() {
+            return mIndex;
+        }
     }
 }

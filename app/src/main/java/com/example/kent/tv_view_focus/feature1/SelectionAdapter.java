@@ -2,6 +2,7 @@ package com.example.kent.tv_view_focus.feature1;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Selection;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ public class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.View
     private OnItemFocusListener mOnItemFocusListener;
 
     private int mLastPosition;
+
+    private long mLastTime;
 
     public SelectionAdapter(List<String> sList) {
         this.mList = convert(sList);
@@ -88,6 +91,28 @@ public class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.View
                             mOnItemFocusListener.onItemFocus(v, getAdapterPosition());
                         }
                     }
+                }
+            });
+
+            tvSelection.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if(event.getAction() == KeyEvent.ACTION_DOWN){
+                        long currTime = System.currentTimeMillis();
+                        switch (keyCode){
+                            case KeyEvent.KEYCODE_DPAD_LEFT:
+                            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                mLastTime = currTime;
+                                break;
+                            case KeyEvent.KEYCODE_DPAD_UP:
+                                if (Math.abs(mLastTime - currTime) < 350) {
+                                    mLastTime = currTime;
+                                    return true;
+                                }
+                                break;
+                        }
+                    }
+                    return false;
                 }
             });
         }
