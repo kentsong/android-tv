@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         cAdpater.setOnItemFocusListener(new OnItemFocusListener() {
             @Override
             public void onItemFocus(View view, int position) {
-                int sPosition = (position + 1) / 5;
+                int sPosition = (position + 1) / 10;
                 sAdapter.setPosition(sPosition);
                 rvSelection.scrollToPosition(sPosition);
                 Timber.d(">> cAdpater onItemFocus position = %s", position);
@@ -64,11 +64,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemFocus(View view, int position) {
                 Timber.d(">> sAdapter onItemFocus position = %s", position);
-//                String str = ((TextView) view).getText().toString();
-
-//                int sPosition = position/10;
-//                sAdapter.notifyDataSetChanged();
-//                rvSelection.scrollToPosition(sPosition;
+                String str = ((TextView) view).getText().toString();
+                int pos = Integer.parseInt(str.split("-")[0]) - 1;
+                cAdpater.setPosition(pos);
+                rvChannel.scrollToPosition(pos);
             }
         });
         rvSelection.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));

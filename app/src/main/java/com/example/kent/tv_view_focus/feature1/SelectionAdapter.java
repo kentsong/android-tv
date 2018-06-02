@@ -36,17 +36,17 @@ public class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.View
     public void setPosition(int pos) {
         Timber.d(">> setPosition = %s", pos);
         SelectionVO oriSelection = mList.get(mLastPosition);
-        oriSelection.isSelected = false;
+        if(oriSelection.isSelected){
+            oriSelection.isSelected = false;
+            notifyItemChanged(mLastPosition);
+        }
 
-        notifyItemChanged(mLastPosition);
 
         SelectionVO newSelection = mList.get(pos);
         newSelection.isSelected = true;
         mLastPosition = pos;
 
         notifyItemChanged(pos);
-
-
 
     }
 

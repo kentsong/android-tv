@@ -27,6 +27,21 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
         return mLastPosition;
     }
 
+    public void setPosition(int pos){
+        Timber.d(">> setPosition = %s", pos);
+        ChannelVO oriChannel= mList.get(mLastPosition);
+        if(oriChannel.isSelected){
+            oriChannel.isSelected = false;
+            notifyItemChanged(mLastPosition);
+        }
+
+        ChannelVO newChannel = mList.get(pos);
+        newChannel.isSelected = true;
+        mLastPosition = pos;
+
+        notifyItemChanged(pos);
+    }
+
     public void setOnItemFocusListener(OnItemFocusListener onItemFocusListener) {
         this.mOnItemFocusListener = onItemFocusListener;
     }
@@ -73,8 +88,9 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
                     Timber.d(">> onFocusChange hasFocus = %s", hasFocus);
                     if (hasFocus) {
                         if(mOnItemFocusListener != null){
-                            mLastPosition = getAdapterPosition();
-                            mOnItemFocusListener.onItemFocus(v, getAdapterPosition());
+                            int position = getAdapterPosition();
+                            mLastPosition = position;
+                            mOnItemFocusListener.onItemFocus(v, position);
                         }
                     }
                 }

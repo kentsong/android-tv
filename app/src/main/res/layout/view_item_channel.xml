@@ -2,8 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:padding="10dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.example.kent.tv_view_focus.view.LabelView
         android:id="@+id/tv_channel"
@@ -11,10 +10,8 @@
         android:layout_height="50dp"
         tools:text="內容"
         android:gravity="center"
-        android:padding="5dp"
         android:textColor="#111111"
         android:background="#dedededd"
-        android:layout_marginEnd="10dp"
         />
 
 
