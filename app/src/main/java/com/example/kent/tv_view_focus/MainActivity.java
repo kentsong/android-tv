@@ -33,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ChannelAdapter cAdpater;
     private SelectionAdapter sAdapter;
+    private LinearLayoutManager mLinearLayoutManager;
+    private boolean mMove = false;
+    private int mIndex = 0;
 
 
     @Override
@@ -56,8 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 Timber.d(">> cAdpater onItemFocus position = %s", position);
             }
         });
-        rvChannel.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvChannel.setLayoutManager(mLinearLayoutManager);
         rvChannel.setAdapter(cAdpater);
+        rvChannel.setOnScrollListener(new RecyclerViewListener(){});
 
         sAdapter = new SelectionAdapter(generateSelection());
         sAdapter.setOnItemFocusListener(new OnItemFocusListener() {
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 String str = ((TextView) view).getText().toString();
                 int pos = Integer.parseInt(str.split("-")[0]) - 1;
                 cAdpater.setPosition(pos);
-                rvChannel.scrollToPosition(pos);
+                moveToPosition(pos);
             }
         });
         rvSelection.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -97,6 +102,54 @@ public class MainActivity extends AppCompatActivity {
         list.add("91-100");
         return list;
     }
+
+    private void moveToPosition(int n) {
+        mIndex = n;
+
+        int firstItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+        int lastItem = mLinearLayoutManager.findLastVisibleItemPosition();
+        Timber.d(">> moveToPosition findFirstVisibleItemPosition = %s, findLastVisibleItemPosition = %s", firstItem, lastItem);
+        if (n <= firstItem ){
+            Timber.d(">>  rvChannel.scrollToPosition(%s)", n);
+            rvChannel.scrollToPosition(n);
+//            rvChannel.smoothScrollToPosition(n);
+        }else if ( n <= lastItem ){
+            int left = rvChannel.getChildAt(n - firstItem).getLeft();
+            Timber.d(">>  rvChannel.scrollBy(%s, 0);", left );
+            rvChannel.scrollBy(left, 0);
+        }else{
+            Timber.d(">>  else scrollToPosition(%s)", n);
+            rvChannel.scrollToPosition(n);
+//            rvChannel.smoothScrollToPosition(n);
+            mMove = true;
+        }
+
+    }
+
+    class RecyclerViewListener extends RecyclerView.OnScrollListener{
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            Timber.d(">>  RecyclerViewListener onScrollStateChanged newState = %s", newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            Timber.d(">>  RecyclerViewListener onScrolled dx = %s, dy = %s", dx, dy);
+            if (mMove){
+                mMove = false;
+                int n = mIndex - mLinearLayoutManager.findFirstVisibleItemPosition();
+                if ( 0 <= n && n < rvChannel.getChildCount()){
+                    int left = rvChannel.getChildAt(n).getLeft();
+                    Timber.d(">>  left = %s", left);
+//                    rvChannel.scrollBy(left, 0); 有 bug
+                    rvChannel.smoothScrollBy(left, 0);
+                }
+            }
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
