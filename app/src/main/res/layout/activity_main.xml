@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:background="#fdfdac">
+
+
+    <LinearLayout android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+
+
+
+        <com.example.kent.tv_view_focus.view.LabelView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="11"
+            android:nextFocusRight="@+id/label_3"/>
+
+        <com.example.kent.tv_view_focus.view.LabelView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="12"/>
+
+
+        <com.example.kent.tv_view_focus.view.LabelView
+            android:id="@+id/label_3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="13"/>
+
+
+        <TextView android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="LabelView"/>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+
+        <com.example.kent.tv_view_focus.view.LabelView2
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="21"/>
+
+        <com.example.kent.tv_view_focus.view.LabelView2
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="22"/>
+
+
+        <com.example.kent.tv_view_focus.view.LabelView2
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="23"/>
+
+        <TextView android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="LabelView2"/>
+
+
+    </LinearLayout>
+
+    <com.example.kent.tv_view_focus.view.SelectionView
+        android:id="@+id/selectionView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+    </com.example.kent.tv_view_focus.view.SelectionView>
+
+
+
+</LinearLayout>
