@@ -103,7 +103,7 @@ public class LabelView extends TextView{
     }
 
     private void onStateChange(){
-        Timber.d(">> Item "+getText()+", onStateChange isFocused = %s, isSelected = %s",isFocused,  isSelected);
+//        Timber.d(">> Item "+getText()+", onStateChange isFocused = %s, isSelected = %s",isFocused,  isSelected);
         if (isFocused) {
             setTextColor(getResources().getColor(R.color.focus));
             setBackgroundColor(getResources().getColor(R.color.focus_bg));

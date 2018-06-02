@@ -1,15 +1,20 @@
 package com.example.kent.tv_view_focus;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.kent.tv_view_focus.feature1.ChannelAdapter;
 import com.example.kent.tv_view_focus.feature1.OnItemFocusListener;
+import com.example.kent.tv_view_focus.feature1.OnKeyDownListener;
 import com.example.kent.tv_view_focus.feature1.SelectionAdapter;
+import com.example.kent.tv_view_focus.feature1.SelectionRecyclerView;
+import com.example.kent.tv_view_focus.view.LabelView;
 import com.example.kent.tv_view_focus.view.SelectionView;
 
 import java.util.ArrayList;
@@ -29,11 +34,12 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rvChannel;
 
     @BindView(R.id.rv_selection)
-    RecyclerView rvSelection;
+    SelectionRecyclerView rvSelection;
 
     private ChannelAdapter cAdpater;
     private SelectionAdapter sAdapter;
     private LinearLayoutManager mLinearLayoutManager;
+    private LinearLayoutManager mSelectionLayoutManager;
     private boolean mMove = false;
     private int mIndex = 0;
 
@@ -53,16 +59,41 @@ public class MainActivity extends AppCompatActivity {
         cAdpater.setOnItemFocusListener(new OnItemFocusListener() {
             @Override
             public void onItemFocus(View view, int position) {
-                int sPosition = (position + 1) / 10;
+                String str = ((TextView) view).getText().toString();
+                int pos = Integer.parseInt(str);
+                int sPosition = (pos - 1) / 10;
                 sAdapter.setPosition(sPosition);
                 rvSelection.scrollToPosition(sPosition);
                 Timber.d(">> cAdpater onItemFocus position = %s", position);
             }
         });
+
+        cAdpater.setmOnKeyDownListener(new OnKeyDownListener() {
+            @Override
+            public void onKeyDown(int keyCode) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    int pos = sAdapter.getLastPosition();
+                    Timber.d(">> sAdapter.getLastPosition() = %s", pos);
+                    View view = mSelectionLayoutManager.findViewByPosition(pos);
+                    if (view == null) {
+                        Timber.d(">> mLinearLayoutManager.findViewByPosition(pos) = null");
+                    } else {
+                        Timber.d(">> mLinearLayoutManager.findViewByPosition(pos) 有找到" );
+                        view.requestFocus();
+                    }
+
+                }
+            }
+        });
+
+
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mSelectionLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
         rvChannel.setLayoutManager(mLinearLayoutManager);
         rvChannel.setAdapter(cAdpater);
-        rvChannel.setOnScrollListener(new RecyclerViewListener(){});
+        rvChannel.setOnScrollListener(new RecyclerViewListener() {
+        });
 
         sAdapter = new SelectionAdapter(generateSelection());
         sAdapter.setOnItemFocusListener(new OnItemFocusListener() {
@@ -70,12 +101,18 @@ public class MainActivity extends AppCompatActivity {
             public void onItemFocus(View view, int position) {
                 Timber.d(">> sAdapter onItemFocus position = %s", position);
                 String str = ((TextView) view).getText().toString();
-                int pos = Integer.parseInt(str.split("-")[0]) - 1;
+                final int pos = Integer.parseInt(str.split("-")[0]) - 1;
                 cAdpater.setPosition(pos);
-                moveToPosition(pos);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        moveToPosition(pos);
+                    }
+                },300);
+
             }
         });
-        rvSelection.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rvSelection.setLayoutManager(mSelectionLayoutManager);
         rvSelection.setAdapter(sAdapter);
 
     }
@@ -103,21 +140,32 @@ public class MainActivity extends AppCompatActivity {
         return list;
     }
 
+    private void test() {
+        View focusedChild = mLinearLayoutManager.getFocusedChild();
+        if (focusedChild == null) {
+            int first = mLinearLayoutManager.findFirstVisibleItemPosition();
+            View view = mLinearLayoutManager.findViewByPosition(first);
+            view.requestFocus();
+        } else {
+            focusedChild.requestFocus();
+        }
+    }
+
     private void moveToPosition(int n) {
         mIndex = n;
 
         int firstItem = mLinearLayoutManager.findFirstVisibleItemPosition();
         int lastItem = mLinearLayoutManager.findLastVisibleItemPosition();
         Timber.d(">> moveToPosition findFirstVisibleItemPosition = %s, findLastVisibleItemPosition = %s", firstItem, lastItem);
-        if (n <= firstItem ){
+        if (n <= firstItem) {
             Timber.d(">>  rvChannel.scrollToPosition(%s)", n);
-            rvChannel.scrollToPosition(n);
+            rvChannel.smoothScrollToPosition(n);
 //            rvChannel.smoothScrollToPosition(n);
-        }else if ( n <= lastItem ){
+        } else if (n <= lastItem) {
             int left = rvChannel.getChildAt(n - firstItem).getLeft();
-            Timber.d(">>  rvChannel.scrollBy(%s, 0);", left );
+            Timber.d(">>  rvChannel.scrollBy(%s, 0);", left);
             rvChannel.scrollBy(left, 0);
-        }else{
+        } else {
             Timber.d(">>  else scrollToPosition(%s)", n);
             rvChannel.scrollToPosition(n);
 //            rvChannel.smoothScrollToPosition(n);
@@ -126,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    class RecyclerViewListener extends RecyclerView.OnScrollListener{
+    class RecyclerViewListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -137,14 +185,15 @@ public class MainActivity extends AppCompatActivity {
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
             Timber.d(">>  RecyclerViewListener onScrolled dx = %s, dy = %s", dx, dy);
-            if (mMove){
+            if (mMove) {
                 mMove = false;
                 int n = mIndex - mLinearLayoutManager.findFirstVisibleItemPosition();
-                if ( 0 <= n && n < rvChannel.getChildCount()){
-                    int left = rvChannel.getChildAt(n).getLeft();
+                if (0 <= n && n < rvChannel.getChildCount()) {
+                    final int left = rvChannel.getChildAt(n).getLeft();
                     Timber.d(">>  left = %s", left);
-//                    rvChannel.scrollBy(left, 0); 有 bug
                     rvChannel.smoothScrollBy(left, 0);
+//                    rvChannel.scrollBy(left, 0); 有 bug
+
                 }
             }
         }

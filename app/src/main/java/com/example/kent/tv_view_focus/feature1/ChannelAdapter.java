@@ -1,6 +1,7 @@
 package com.example.kent.tv_view_focus.feature1;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
     private List<ChannelVO> mList;
 
     private OnItemFocusListener mOnItemFocusListener;
+    private OnKeyDownListener mOnKeyDownListener;
 
     private int mLastPosition;
 
@@ -44,6 +46,10 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
 
     public void setOnItemFocusListener(OnItemFocusListener onItemFocusListener) {
         this.mOnItemFocusListener = onItemFocusListener;
+    }
+
+    public void setmOnKeyDownListener(OnKeyDownListener mOnKeyDownListener) {
+        this.mOnKeyDownListener = mOnKeyDownListener;
     }
 
     public ChannelAdapter(List<String> sList) {
@@ -93,6 +99,21 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
                             mOnItemFocusListener.onItemFocus(v, position);
                         }
                     }
+                }
+            });
+
+            tvChannel.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if(event.getAction() == KeyEvent.ACTION_DOWN){
+                        if(mOnKeyDownListener != null){
+                            mOnKeyDownListener.onKeyDown(keyCode);
+                            if(keyCode == KeyEvent.KEYCODE_DPAD_DOWN){
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
                 }
             });
         }

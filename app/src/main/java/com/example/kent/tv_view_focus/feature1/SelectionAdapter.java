@@ -61,6 +61,9 @@ public class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.View
         holder.bind(mList.get(position));
     }
 
+    public int getLastPosition() {
+        return mLastPosition;
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -80,6 +83,7 @@ public class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.View
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
+                        Timber.d(">> onFocusChange hasFocus = %s ", hasFocus);
                         if (mOnItemFocusListener != null) {
                             mOnItemFocusListener.onItemFocus(v, getAdapterPosition());
                         }
