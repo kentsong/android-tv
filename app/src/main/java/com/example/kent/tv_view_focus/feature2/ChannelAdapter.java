@@ -1,4 +1,4 @@
-package com.example.kent.tv_view_focus.feature1;
+package com.example.kent.tv_view_focus.feature2;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
