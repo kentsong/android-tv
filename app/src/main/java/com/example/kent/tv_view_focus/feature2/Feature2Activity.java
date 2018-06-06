@@ -3,11 +3,8 @@ package com.example.kent.tv_view_focus.feature2;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.kent.tv_view_focus.R;
@@ -38,7 +35,7 @@ public class Feature2Activity extends AppCompatActivity {
 
     private ChannelAdapter cAdpater;
     private SelectionAdapter sAdapter;
-    private LinearLayoutManager mLinearLayoutManager;
+    private CenterLayoutManger mChannelLayoutManager;
     private LinearLayoutManager mSelectionLayoutManager;
     private boolean mMove = false;
     private int mIndex = 0;
@@ -67,11 +64,6 @@ public class Feature2Activity extends AppCompatActivity {
         cAdpater.setOnItemFocusListener(new OnItemFocusListener() {
             @Override
             public void onItemFocus(View view, int position) {
-
-//                cAdpater.notifyDataSetChanged();
-//                rvChannel.scrollToPosition(position);
-//                rvChannel.scrollBy(100,0);
-
                 mLastChannelPos = position;
             }
         });
@@ -84,9 +76,9 @@ public class Feature2Activity extends AppCompatActivity {
                     Timber.d(">> sAdapter.getLastPosition() = %s", pos);
                     View view = mSelectionLayoutManager.findViewByPosition(pos);
                     if (view == null) {
-                        Timber.d(">> mLinearLayoutManager.findViewByPosition(pos) = null");
+                        Timber.d(">> mChannelLayoutManager.findViewByPosition(pos) = null");
                     } else {
-                        Timber.d(">> mLinearLayoutManager.findViewByPosition(pos) 有找到");
+                        Timber.d(">> mChannelLayoutManager.findViewByPosition(pos) 有找到");
                         view.requestFocus();
                     }
 
@@ -94,8 +86,8 @@ public class Feature2Activity extends AppCompatActivity {
             }
         });
 
-        mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvChannel.setLayoutManager(mLinearLayoutManager);
+        mChannelLayoutManager = new CenterLayoutManger(this, LinearLayoutManager.HORIZONTAL, false);
+        rvChannel.setLayoutManager(mChannelLayoutManager);
         rvChannel.setAdapter(cAdpater);
         rvChannel.scrollToPosition(mLastChannelPos);
 
@@ -176,8 +168,8 @@ public class Feature2Activity extends AppCompatActivity {
             public void run() {
                 mIndex = n;
 
-                int firstItem = mLinearLayoutManager.findFirstVisibleItemPosition();
-                int lastItem = mLinearLayoutManager.findLastVisibleItemPosition();
+                int firstItem = mChannelLayoutManager.findFirstVisibleItemPosition();
+                int lastItem = mChannelLayoutManager.findLastVisibleItemPosition();
                 Timber.d(">> moveToPosition findFirstVisibleItemPosition = %s, findLastVisibleItemPosition = %s", firstItem, lastItem);
                 if (n <= firstItem) {
                     //当要置左的项在当前显示的第一个项的前面时
