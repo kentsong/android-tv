@@ -35,7 +35,7 @@ public class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.View
     }
 
     public void setPosition(int pos) {
-        Timber.d(">> setPosition = %s", pos);
+        Timber.d(">> setSelected = %s", pos);
         SelectionVO oriSelection = mList.get(mLastPosition);
         if(oriSelection.isSelected){
             oriSelection.isSelected = false;
@@ -103,10 +103,6 @@ public class SelectionAdapter extends RecyclerView.Adapter<SelectionAdapter.View
                                 mLastTime = currTime;
                                 break;
                             case KeyEvent.KEYCODE_DPAD_UP:
-                                if (Math.abs(mLastTime - currTime) < 350) {
-                                    mLastTime = currTime;
-                                    return true;
-                                }
                                 break;
                         }
                     }

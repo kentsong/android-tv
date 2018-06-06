@@ -76,7 +76,7 @@ public class LabelView extends TextView{
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
-        Log.d("LabelView", ">> Item "+getText()+", onFocusChanged focused = "+focused+", direction = "+direction );
+        Log.d("LabelView", ">> Name "+getText()+", onFocusChanged focused = "+focused+", direction = "+direction );
         if(focused){
             setTextColor(getResources().getColor(R.color.focus));
             setBackgroundColor(getResources().getColor(R.color.focus_bg));
@@ -119,7 +119,7 @@ public class LabelView extends TextView{
     }
 
     public void onSelected(){
-        Log.d("LabelView", ">> Item "+getText()+", onClick hit");
+        Log.d("LabelView", ">> Name: "+getText()+", onClick hit");
         isSelected = true;
         setTextColor(getResources().getColor(R.color.colorAccent));
     }

@@ -1,7 +1,7 @@
 package com.example.kent.tv_view_focus.feature2;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,28 +18,53 @@ import timber.log.Timber;
 
 public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHolder> {
 
+    private Context mContext;
     private List<ChannelVO> mList;
 
     private OnItemFocusListener mOnItemFocusListener;
     private OnKeyDownListener mOnKeyDownListener;
 
-    private int mLastPosition;
+    private int mLastSelectedPos;
+    private int mLastFocusPos;
 
-    public int getLastPosition() {
-        return mLastPosition;
+    public int getLastSelectedPos() {
+        return mLastSelectedPos;
     }
 
-    public void setPosition(int pos){
-        Timber.d(">> setPosition = %s", pos);
-        ChannelVO oriChannel= mList.get(mLastPosition);
+    public void setSelected(int pos){
+        Timber.d(">> setSelected = %s", pos);
+        ChannelVO oriChannel= mList.get(mLastSelectedPos);
         if(oriChannel.isSelected){
             oriChannel.isSelected = false;
-            notifyItemChanged(mLastPosition);
+            notifyItemChanged(mLastSelectedPos);
         }
 
         ChannelVO newChannel = mList.get(pos);
         newChannel.isSelected = true;
-        mLastPosition = pos;
+        mLastSelectedPos = pos;
+
+        notifyItemChanged(pos);
+    }
+
+    public void setItemFocused(int pos){
+        Timber.d(">> setItemFocused = %s", pos);
+        ChannelVO oriChannel= mList.get(mLastFocusPos);
+        if(oriChannel.isFocused){
+            oriChannel.isFocused = false;
+            notifyItemChanged(mLastFocusPos);
+        }
+
+        ChannelVO newChannel = mList.get(pos);
+        newChannel.isFocused = true;
+        mLastFocusPos = pos;
+
+        notifyItemChanged(pos);
+    }
+
+    public void setItemUnFocus(int pos){
+        ChannelVO newChannel = mList.get(pos);
+        newChannel.isFocused = false;
+        mLastFocusPos = pos;
 
         notifyItemChanged(pos);
     }
@@ -52,7 +77,8 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
         this.mOnKeyDownListener = mOnKeyDownListener;
     }
 
-    public ChannelAdapter(List<String> sList) {
+    public ChannelAdapter(Context context , List<String> sList) {
+        this.mContext = context;
         this.mList = convert(sList);
     }
 
@@ -92,35 +118,18 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
         }
 
         public void bind(ChannelVO vo) {
-            tvChannel.setText(vo.name);
-            tvChannel.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    Timber.d(">> onFocusChange hasFocus = %s", hasFocus);
-                    if (hasFocus) {
-                        if(mOnItemFocusListener != null){
-                            int position = getAdapterPosition();
-                            mLastPosition = position;
-                            mOnItemFocusListener.onItemFocus(v, position);
-                        }
-                    }
-                }
-            });
+            tvChannel.setFocusable(false);
+            tvChannel.setFocusableInTouchMode(false);
 
-            tvChannel.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if(event.getAction() == KeyEvent.ACTION_DOWN){
-                        if(mOnKeyDownListener != null){
-                            mOnKeyDownListener.onKeyDown(keyCode);
-                            if(keyCode == KeyEvent.KEYCODE_DPAD_DOWN){
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-            });
+            tvChannel.setText(vo.name);
+            if(vo.isFocused){
+                tvChannel.setBackgroundColor(mContext.getResources().getColor(R.color.focus_bg));
+                mOnItemFocusListener.onItemFocus(tvChannel, getAdapterPosition());
+            } else{
+                tvChannel.setBackgroundColor(mContext.getResources().getColor(R.color.unfocus_bg));
+            }
+
+
         }
 
     }

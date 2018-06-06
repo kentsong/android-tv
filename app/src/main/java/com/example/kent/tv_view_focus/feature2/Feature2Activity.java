@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.kent.tv_view_focus.R;
 import com.example.kent.tv_view_focus.utils.TimerManager;
@@ -17,15 +19,22 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import timber.log.Timber;
 
 public class Feature2Activity extends AppCompatActivity {
 
     @BindView(R.id.rv_channel)
-    RecyclerView rvChannel;
+    CustomRecyclerView rvChannel;
 
     @BindView(R.id.rv_selection)
     SelectionRecyclerView rvSelection;
+
+    @BindView(R.id.edit_text1)
+    EditText editText1;
+    @BindView(R.id.edit_text2)
+    EditText editText2;
+
 
     private ChannelAdapter cAdpater;
     private SelectionAdapter sAdapter;
@@ -36,9 +45,8 @@ public class Feature2Activity extends AppCompatActivity {
 
     TimerManager mTimerManager;
 
-    private int mLastChannelPos = 80;
-    private int mLastSlectionPos = 10;
-
+    private int mLastChannelPos = 0;
+    private int mLastSlectionPos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,17 +63,16 @@ public class Feature2Activity extends AppCompatActivity {
     }
 
     private void initChaneel() {
-        cAdpater = new ChannelAdapter(generateChannel());
+        cAdpater = new ChannelAdapter(this, generateChannel());
         cAdpater.setOnItemFocusListener(new OnItemFocusListener() {
             @Override
             public void onItemFocus(View view, int position) {
+
+//                cAdpater.notifyDataSetChanged();
+//                rvChannel.scrollToPosition(position);
+//                rvChannel.scrollBy(100,0);
+
                 mLastChannelPos = position;
-                String str = ((TextView) view).getText().toString();
-                int pos = Integer.parseInt(str);
-                int sPosition = (pos - 1) / 10;
-                sAdapter.setPosition(sPosition);
-                rvSelection.scrollToPosition(sPosition);
-                Timber.d(">> cAdpater onItemFocus position = %s", position);
             }
         });
 
@@ -90,9 +97,23 @@ public class Feature2Activity extends AppCompatActivity {
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvChannel.setLayoutManager(mLinearLayoutManager);
         rvChannel.setAdapter(cAdpater);
-        rvChannel.addOnScrollListener(new RecyclerViewListener() {
-        });
         rvChannel.scrollToPosition(mLastChannelPos);
+
+
+        rvChannel.setFocusLostListener(new CustomRecyclerView.FocusLostListener() {
+            @Override
+            public void onFocusLost(View lastFocusChild, int direction) {
+                Timber.d("onFocusLost lastFocusChild = %s, direction = %s", lastFocusChild, direction);
+            }
+        });
+
+        rvChannel.setGainFocusListener(new CustomRecyclerView.FocusGainListener() {
+            @Override
+            public void onFocusGain(View child, View focuedView) {
+                Timber.d("onFocusGain child = %s, focuedView = %s", child, focuedView);
+            }
+        });
+
     }
 
     private void initSelection() {
@@ -105,11 +126,11 @@ public class Feature2Activity extends AppCompatActivity {
             @Override
             public void onItemFocus(View view, int position) {
                 mLastSlectionPos = position;
-                Timber.d(">> sAdapter onItemFocus position = %s", position);
-                String str = ((TextView) view).getText().toString();
-                final int pos = Integer.parseInt(str.split("-")[0]) - 1;
-                cAdpater.setPosition(pos);
-                mTimerManager.addTask(new ChannelLoadTask(pos));
+//                Timber.d(">> sAdapter onItemFocus position = %s", position);
+//                String str = ((TextView) view).getText().toString();
+//                final int pos = Integer.parseInt(str.split("-")[0]) - 1;
+//                cAdpater.setSelected(pos);
+//                mTimerManager.addTask(new ChannelLoadTask(pos));
 
             }
         });
@@ -178,29 +199,20 @@ public class Feature2Activity extends AppCompatActivity {
         });
     }
 
-    class RecyclerViewListener extends RecyclerView.OnScrollListener {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            Timber.d(">>  RecyclerViewListener onScrollStateChanged newState = %s", newState);
-        }
+    @OnClick(R.id.button1)
+    public void onButton1Clicked() {
+        int x = editText1.getText() == null ? 0 : Integer.parseInt(editText1.getText().toString());
+        rvChannel.smoothScrollBy(x, 0);
+        cAdpater.notifyDataSetChanged();
 
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            Timber.d(">>  RecyclerViewListener onScrolled dx = %s, dy = %s", dx, dy);
-            if (mMove) {
-                mMove = false;
-                //获取要置左的项在当前屏幕的位置，mIndex是记录的要置左项在RecyclerView中的位置
-                int n = mIndex - mLinearLayoutManager.findFirstVisibleItemPosition();
-                if (0 <= n && n < rvChannel.getChildCount()) {
-                    final int left = rvChannel.getChildAt(n).getLeft();
-                    Timber.d(">>  left = %s", left);
-                    rvChannel.smoothScrollBy(left, 0);
+    }
 
-                }
-            }
-        }
+    @OnClick(R.id.button2)
+    public void onButton2Clicked() {
+        int index = editText2.getText() == null ? 0 : Integer.parseInt(editText2.getText().toString()) - 1;
+        rvChannel.smoothScrollToPosition(index);
+        cAdpater.setItemFocused(index);
+        cAdpater.notifyDataSetChanged();
     }
 
 
@@ -223,5 +235,6 @@ public class Feature2Activity extends AppCompatActivity {
             moveToPosition(mIndex);
         }
     }
+
 }
 
