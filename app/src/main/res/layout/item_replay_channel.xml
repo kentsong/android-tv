@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="100px"
+    android:layout_height="100px"
+    tools:background="@color/gray_light_alpha">
+
+    <TextView
+        android:id="@+id/channel_tv"
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:focusable="true"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="38px"
+        tools:text="全部" />
+
+</android.support.constraint.ConstraintLayout>
