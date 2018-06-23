@@ -4,11 +4,14 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 
 import com.example.kent.tv_view_focus.feature.grid_recyclerview.adapter.FocusableAdapter;
+
+import timber.log.Timber;
 
 
 /**
@@ -26,10 +29,6 @@ import com.example.kent.tv_view_focus.feature.grid_recyclerview.adapter.Focusabl
  * @See {@link FocusableAdapter}
  */
 public class FocusableRecyclerView extends RecyclerView {
-
-    //布局方式
-    @FocusableContract.LayoutMode
-    private int mLayoutMode;
 
     //是否可以横向移出
     private boolean mCanFocusOutHorizontal;
@@ -76,11 +75,6 @@ public class FocusableRecyclerView extends RecyclerView {
         }
     }
 
-    public void setAdapter(Adapter adapter, @FocusableContract.LayoutMode int layoutMode) {
-        this.mLayoutMode = layoutMode;
-        setAdapter(adapter);
-    }
-
     public void setDefaultIndex(Integer defaultIndex) {
         this.mDefaultIndex = defaultIndex;
     }
@@ -114,23 +108,21 @@ public class FocusableRecyclerView extends RecyclerView {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        boolean result;
-        switch (mLayoutMode) {
-            case FocusableContract.LINEARLAYOUT_HORIZONTAL:
-                result = onKeyDownLinearLayoutHorizontal(keyCode);
-                break;
-            case FocusableContract.LINEARLAYOUT_VERTICAL:
-                result = onKeyDownLinearLayoutVertical(keyCode);
-                break;
-            case FocusableContract.GRIDLAYOUT_HORIZONTAL:
+        boolean result = false;
+        if (getLayoutManager() instanceof GridLayoutManager) {
+            GridLayoutManager manager = (GridLayoutManager) getLayoutManager();
+            if (manager.getOrientation() == RecyclerView.HORIZONTAL) {
                 result = onKeyDownGirdLayoutHorizontal(keyCode);
-                break;
-            case FocusableContract.GRIDLAYOUT_VERTICAL:
+            } else {
                 result = onKeyDownGirdLayoutVertical(keyCode);
-                break;
-            default:
-                result = false;
-                break;
+            }
+        } else if (getLayoutManager() instanceof LinearLayoutManager) {
+            LinearLayoutManager manager = (LinearLayoutManager) getLayoutManager();
+            if (manager.getOrientation() == RecyclerView.HORIZONTAL) {
+                result = onKeyDownLinearLayoutHorizontal(keyCode);
+            } else {
+                result = onKeyDownLinearLayoutVertical(keyCode);
+            }
         }
 
         return result || super.onKeyDown(keyCode, event);
@@ -204,6 +196,9 @@ public class FocusableRecyclerView extends RecyclerView {
 
     private boolean onKeyDownGirdLayoutHorizontal(int keyCode) {
         int itemCount = mAdapter.getItemCount();
+
+        ((GridLayoutManager) getLayoutManager()).getOrientation();
+
         int spanCount = ((GridLayoutManager) getLayoutManager()).getSpanCount();
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_DOWN:

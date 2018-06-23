@@ -38,10 +38,10 @@ public class GirdRvActivity extends AppCompatActivity {
 
     private void setupCategoryRv() {
         ChannelAdapter adapter = new ChannelAdapter(generateData());
-        recyclerview.setLayoutManager(new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false));
+        recyclerview.setLayoutManager(new CenterGridLayoutManger(this, 3, GridLayoutManager.VERTICAL, false));
         recyclerview.setCanFocusOutHorizontal(true);
         recyclerview.setDefaultIndex(0);
-        recyclerview.setAdapter(adapter, FocusableContract.GRIDLAYOUT_VERTICAL);
+        recyclerview.setAdapter(adapter);
     }
 
     private List<SimpleData> generateData() {
