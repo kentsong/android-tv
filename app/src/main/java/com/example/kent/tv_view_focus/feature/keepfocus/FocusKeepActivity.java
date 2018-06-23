@@ -8,7 +8,6 @@ import android.view.View;
 import com.example.kent.tv_view_focus.R;
 import com.example.kent.tv_view_focus.feature2.CenterLayoutManger;
 import com.example.kent.tv_view_focus.feature2.OnItemFocusListener;
-import com.example.kent.tv_view_focus.feature2.SelectionAdapter;
 import com.example.kent.tv_view_focus.feature2.SelectionRecyclerView;
 import com.example.kent.tv_view_focus.utils.TimerManager;
 
