@@ -1,5 +1,7 @@
 package com.example.kent.tv_view_focus.feature2;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
+import com.example.kent.tv_view_focus.MainActivity;
 import com.example.kent.tv_view_focus.R;
 import com.example.kent.tv_view_focus.utils.TimerManager;
 
@@ -226,6 +229,11 @@ public class Feature2Activity extends AppCompatActivity {
         public void run() {
             moveToPosition(mIndex);
         }
+    }
+
+    public static void launch(Context context) {
+        Intent intent = new Intent(context, Feature2Activity.class);
+        context.startActivity(intent);
     }
 
 }

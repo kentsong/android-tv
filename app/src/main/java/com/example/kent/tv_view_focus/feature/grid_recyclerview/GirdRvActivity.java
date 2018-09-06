@@ -1,11 +1,14 @@
 package com.example.kent.tv_view_focus.feature.grid_recyclerview;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 
 import com.example.kent.tv_view_focus.R;
+import com.example.kent.tv_view_focus.feature.animator.AnimatorActivity;
 import com.example.kent.tv_view_focus.feature.grid_recyclerview.adapter.ChannelAdapter;
 import com.example.kent.tv_view_focus.feature.grid_recyclerview.model.SimpleData;
 
@@ -50,5 +53,10 @@ public class GirdRvActivity extends AppCompatActivity {
             list.add(new SimpleData(""+i));
         }
         return list;
+    }
+
+    public static void launch(Context context) {
+        Intent intent = new Intent(context, GirdRvActivity.class);
+        context.startActivity(intent);
     }
 }

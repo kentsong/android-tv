@@ -49,7 +49,7 @@ public class CenterGridLayoutManger extends GridLayoutManager {
         }
 
         protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-            return 0.4f;
+            return 0.2f;
         }
 
         @Override

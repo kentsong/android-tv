@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -182,6 +183,7 @@ public class FocusKeepRecyclerView extends RecyclerView {
     /**
      * 控制当前焦点最后绘制，防止焦点放大后被遮挡
      * 原顺序123456789，当4是focus时，绘制顺序变为123567894
+     *
      * @param childCount
      * @param i
      * @return
@@ -204,5 +206,29 @@ public class FocusKeepRecyclerView extends RecyclerView {
 //            return i+1;
 //        }
 //    }
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() != KeyEvent.ACTION_DOWN) {
+            return super.dispatchKeyEvent(event);
+        }
 
+        int next;
+        if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            next = mCurrentFocusPosition - 6 < 0 ? 0 : mCurrentFocusPosition - 6;
+            View view = getLayoutManager().findViewByPosition(next);
+            if (view == null) {
+                Timber.d(">> #### KeyEvent.KEYCODE_DPAD_UP");
+                return true;
+            }
+        } else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            next = mCurrentFocusPosition + 6;
+            View view = getLayoutManager().findViewByPosition(next);
+            if (view == null) {
+                Timber.d(">> #### KeyEvent.KEYCODE_DPAD_UP");
+                return true;
+            }
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
 }

@@ -1,7 +1,9 @@
 package com.example.kent.tv_view_focus;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         initSelection();
     }
 
-    private void initChaneel(){
+    private void initChaneel() {
         cAdpater = new ChannelAdapter(generateChannel());
         cAdpater.setOnItemFocusListener(new OnItemFocusListener() {
             @Override
@@ -88,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     if (view == null) {
                         Timber.d(">> mLinearLayoutManager.findViewByPosition(pos) = null");
                     } else {
-                        Timber.d(">> mLinearLayoutManager.findViewByPosition(pos) 有找到" );
+                        Timber.d(">> mLinearLayoutManager.findViewByPosition(pos) 有找到");
                         view.requestFocus();
                     }
 
@@ -99,11 +101,12 @@ public class MainActivity extends AppCompatActivity {
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvChannel.setLayoutManager(mLinearLayoutManager);
         rvChannel.setAdapter(cAdpater);
-        rvChannel.addOnScrollListener(new RecyclerViewListener() {});
+        rvChannel.addOnScrollListener(new RecyclerViewListener() {
+        });
         rvChannel.scrollToPosition(mLastChannelPos);
     }
 
-    private void initSelection(){
+    private void initSelection() {
         mTimerManager = new TimerManager();
 
         mSelectionLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -125,8 +128,6 @@ public class MainActivity extends AppCompatActivity {
         rvSelection.setAdapter(sAdapter);
         rvSelection.scrollToPosition(mLastSlectionPos);
     }
-
-
 
 
     private List<String> generateChannel() {
@@ -156,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 先用scrollToPosition，将要置左的项先移动显示出来，然后计算这一项离第一項的距离，用 scrollBy 完成！
+     *
      * @param n
      */
     private void moveToPosition(final int n) {
@@ -232,4 +234,10 @@ public class MainActivity extends AppCompatActivity {
             moveToPosition(mIndex);
         }
     }
+
+    public static void launch(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
+    }
+
 }

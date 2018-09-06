@@ -1,6 +1,8 @@
 package com.example.kent.tv_view_focus.feature.animator;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.kent.tv_view_focus.R;
+import com.example.kent.tv_view_focus.feature3.Feature3Activity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,5 +76,10 @@ public class AnimatorActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public static void launch(Context context) {
+        Intent intent = new Intent(context, AnimatorActivity.class);
+        context.startActivity(intent);
     }
 }

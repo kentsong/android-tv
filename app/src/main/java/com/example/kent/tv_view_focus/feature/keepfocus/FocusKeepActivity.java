@@ -1,11 +1,14 @@
 package com.example.kent.tv_view_focus.feature.keepfocus;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.example.kent.tv_view_focus.R;
+import com.example.kent.tv_view_focus.feature.grid_recyclerview.GirdRvActivity;
 import com.example.kent.tv_view_focus.feature2.CenterLayoutManger;
 import com.example.kent.tv_view_focus.feature2.OnItemFocusListener;
 import com.example.kent.tv_view_focus.feature2.SelectionRecyclerView;
@@ -185,6 +188,11 @@ public class FocusKeepActivity extends AppCompatActivity {
         list.add("91-100");
         list.add("101-110");
         return list;
+    }
+
+    public static void launch(Context context) {
+        Intent intent = new Intent(context, FocusKeepActivity.class);
+        context.startActivity(intent);
     }
 
 }

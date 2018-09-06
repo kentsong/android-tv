@@ -129,5 +129,8 @@ public class LabelView extends TextView{
         setTextColor(getResources().getColor(R.color.colorPrimary));
     }
 
-
+    @Override
+    public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
+        return super.requestFocus(direction, previouslyFocusedRect);
+    }
 }

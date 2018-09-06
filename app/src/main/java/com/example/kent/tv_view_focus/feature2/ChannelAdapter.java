@@ -31,10 +31,10 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
         return mLastSelectedPos;
     }
 
-    public void setSelected(int pos){
+    public void setSelected(int pos) {
         Timber.d(">> setSelected = %s", pos);
-        ChannelVO oriChannel= mList.get(mLastSelectedPos);
-        if(oriChannel.isSelected){
+        ChannelVO oriChannel = mList.get(mLastSelectedPos);
+        if (oriChannel.isSelected) {
             oriChannel.isSelected = false;
             notifyItemChanged(mLastSelectedPos);
         }
@@ -46,10 +46,10 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
         notifyItemChanged(pos);
     }
 
-    public void setItemFocused(int pos){
+    public void setItemFocused(int pos) {
         Timber.d(">> setItemFocused = %s", pos);
-        ChannelVO oriChannel= mList.get(mLastFocusPos);
-        if(oriChannel.isFocused){
+        ChannelVO oriChannel = mList.get(mLastFocusPos);
+        if (oriChannel.isFocused) {
             oriChannel.isFocused = false;
             notifyItemChanged(mLastFocusPos);
         }
@@ -61,7 +61,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
         notifyItemChanged(pos);
     }
 
-    public void setItemUnFocus(int pos){
+    public void setItemUnFocus(int pos) {
         ChannelVO newChannel = mList.get(pos);
         newChannel.isFocused = false;
         mLastFocusPos = pos;
@@ -77,7 +77,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
         this.mOnKeyDownListener = mOnKeyDownListener;
     }
 
-    public ChannelAdapter(Context context , List<String> sList) {
+    public ChannelAdapter(Context context, List<String> sList) {
         this.mContext = context;
         this.mList = convert(sList);
     }
@@ -103,6 +103,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Timber.d(">> onBindViewHolder pos = %s", position);
         holder.bind(mList.get(position));
     }
 
@@ -122,10 +123,10 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
             tvChannel.setFocusableInTouchMode(false);
 
             tvChannel.setText(vo.name);
-            if(vo.isFocused){
+            if (vo.isFocused) {
                 tvChannel.setBackgroundColor(mContext.getResources().getColor(R.color.focus_bg));
                 mOnItemFocusListener.onItemFocus(tvChannel, getAdapterPosition());
-            } else{
+            } else {
                 tvChannel.setBackgroundColor(mContext.getResources().getColor(R.color.unfocus_bg));
             }
 
