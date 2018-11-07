@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.kent.tv_view_focus">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Include following permission if you load images from Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Include following permission if you want to cache images on SD card -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:name=".TvApplication"
         android:allowBackup="true"
@@ -23,7 +26,7 @@
         <activity android:name=".feature.grid_recyclerview.GirdRvActivity" />
         <activity android:name=".feature.keepfocus.FocusKeepActivity" />
         <activity android:name=".feature2.Feature2Activity" />
-        <activity android:name=".feature.glide.GlideTestActivity"/>
+        <activity android:name=".feature.glide.GlideTestActivity" />
     </application>
 
 </manifest>

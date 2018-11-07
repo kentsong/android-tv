@@ -18,6 +18,9 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.kent.tv_view_focus.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,6 +49,11 @@ public class GlideTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_glide);
         ButterKnife.bind(this);
+
+        // Create global configuration and initialize ImageLoader with this config
+//        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+//			.build();
+//        ImageLoader.getInstance().init(config);
     }
 
     @OnClick({R.id.get_img1, R.id.get_img2, R.id.get_img3, R.id.clear_img})
@@ -68,7 +76,15 @@ public class GlideTestActivity extends AppCompatActivity {
 
 
     private void loadImage(String url) {
-
+//        ImageLoader imageLoader = ImageLoader.getInstance();
+//        imageLoader.loadImage(url, new SimpleImageLoadingListener(){
+//            @Override
+//            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+//                super.onLoadingComplete(imageUri, view, loadedImage);
+//                Timber.d(">> loadImage onLoadingComplete");
+//                targetImg.setImageBitmap(loadedImage);
+//            }
+//        });
 
 
         RequestOptions options = new RequestOptions()
@@ -83,11 +99,14 @@ public class GlideTestActivity extends AppCompatActivity {
         Drawable drawable = targetImg.getDrawable();
         if (drawable != null) {
             if (drawable instanceof BitmapDrawable) {
-//                Glide.get(this).clearMemory();
-//                Glide.with(this).clear(targetImg);
-                Timber.d(">> release/BitmapDrawable = %s", drawable);
+                Timber.d(">> clearImage/BitmapDrawable = %s", drawable);
                 Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                bitmap.recycle();
+                if(bitmap != null && !bitmap.isRecycled()){
+                    Timber.d(">> recycleBitmap");
+
+                    bitmap.recycle();
+                }
+
 
                 targetImg.setImageResource(0);
             } else if (drawable instanceof TransitionDrawable) {
@@ -102,5 +121,12 @@ public class GlideTestActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.get(this).clearMemory();
+        Timber.d(">> onDestroy");
+//        ImageLoader.getInstance().clearMemoryCache();
+//        ImageLoader.getInstance().clearDiskCache();
+    }
 }
