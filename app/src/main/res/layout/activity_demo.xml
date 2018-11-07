@@ -17,37 +17,43 @@
             android:id="@+id/btn_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MainActivity"/>
+            android:text="MainActivity" />
 
         <Button
             android:id="@+id/btn_feature2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="feature2Activity"/>
+            android:text="feature2Activity" />
 
         <Button
             android:id="@+id/btn_feature3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="找尋最近獲焦測試"/>
+            android:text="找尋最近獲焦測試" />
 
         <Button
             android:id="@+id/btn_animator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="動畫"/>
+            android:text="動畫" />
 
         <Button
             android:id="@+id/btn_grid_recyclerview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="grid_recyclerview"/>
+            android:text="grid_recyclerview" />
 
         <Button
             android:id="@+id/btn_keep_focus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="keep_focus"/>
+            android:text="keep_focus" />
+
+        <Button
+            android:id="@+id/btn_glide_clear_cache"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Glide_Clear_Cache" />
 
     </LinearLayout>
 

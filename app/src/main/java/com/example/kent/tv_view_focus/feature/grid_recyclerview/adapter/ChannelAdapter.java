@@ -16,6 +16,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Created by KentSong on 2018/6/11.
@@ -35,6 +36,7 @@ public class ChannelAdapter extends FocusableAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ((ItemViewHolder) holder).bind(position);
+        Timber.d(">> onBindViewHolder pos = %s", position);
     }
 
     @Override

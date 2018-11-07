@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.kent.tv_view_focus.feature.animator.AnimatorActivity;
+import com.example.kent.tv_view_focus.feature.glide.GlideTestActivity;
 import com.example.kent.tv_view_focus.feature.grid_recyclerview.GirdRvActivity;
 import com.example.kent.tv_view_focus.feature.keepfocus.FocusKeepActivity;
 import com.example.kent.tv_view_focus.feature2.Feature2Activity;
@@ -41,7 +42,8 @@ public class DemoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick({R.id.btn_main, R.id.btn_feature2, R.id.btn_feature3, R.id.btn_animator, R.id.btn_grid_recyclerview, R.id.btn_keep_focus})
+    @OnClick({R.id.btn_main, R.id.btn_feature2, R.id.btn_feature3, R.id.btn_animator, R.id.btn_grid_recyclerview, R.id.btn_keep_focus,
+            R.id.btn_glide_clear_cache})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_main:
@@ -61,6 +63,9 @@ public class DemoActivity extends AppCompatActivity {
                 break;
             case R.id.btn_keep_focus:
                 FocusKeepActivity.launch(this);
+                break;
+            case R.id.btn_glide_clear_cache:
+                GlideTestActivity.launch(this);
                 break;
         }
     }
