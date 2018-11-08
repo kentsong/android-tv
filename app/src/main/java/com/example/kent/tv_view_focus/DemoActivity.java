@@ -12,6 +12,7 @@ import com.example.kent.tv_view_focus.feature.grid_recyclerview.GirdRvActivity;
 import com.example.kent.tv_view_focus.feature.keepfocus.FocusKeepActivity;
 import com.example.kent.tv_view_focus.feature2.Feature2Activity;
 import com.example.kent.tv_view_focus.feature3.Feature3Activity;
+import com.example.kent.tv_view_focus.rxjava.anim.RxAnimActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,7 +44,7 @@ public class DemoActivity extends AppCompatActivity {
     }
 
     @OnClick({R.id.btn_main, R.id.btn_feature2, R.id.btn_feature3, R.id.btn_animator, R.id.btn_grid_recyclerview, R.id.btn_keep_focus,
-            R.id.btn_glide_clear_cache})
+            R.id.btn_glide_clear_cache, R.id.btn_rx_anim})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_main:
@@ -66,6 +67,9 @@ public class DemoActivity extends AppCompatActivity {
                 break;
             case R.id.btn_glide_clear_cache:
                 GlideTestActivity.launch(this);
+                break;
+            case R.id.btn_rx_anim:
+                RxAnimActivity.launch(this);
                 break;
         }
     }

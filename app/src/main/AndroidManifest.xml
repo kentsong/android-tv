@@ -27,6 +27,7 @@
         <activity android:name=".feature.keepfocus.FocusKeepActivity" />
         <activity android:name=".feature2.Feature2Activity" />
         <activity android:name=".feature.glide.GlideTestActivity" />
+        <activity android:name=".rxjava.anim.RxAnimActivity"/>
     </application>
 
 </manifest>
