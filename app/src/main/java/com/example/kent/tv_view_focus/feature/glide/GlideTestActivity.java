@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -21,6 +23,9 @@ import com.example.kent.tv_view_focus.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -86,22 +91,32 @@ public class GlideTestActivity extends AppCompatActivity {
 //            }
 //        });
 
+        Picasso.get().load(url)
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .into(targetImg);
 
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .priority(Priority.HIGH);
-        Glide.with(this).load(url).apply(options).into(targetImg);
+//
+//        RequestOptions options = new RequestOptions()
+//                .centerCrop()
+//                .skipMemoryCache(true)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .priority(Priority.HIGH);
+//        Glide.with(this).load(url).apply(options).into(targetImg);
     }
 
     private void clearImage() {
+        Timber.d(">> flag1");
         Drawable drawable = targetImg.getDrawable();
         if (drawable != null) {
+            Timber.d(">> flag2");
+
             if (drawable instanceof BitmapDrawable) {
+                Timber.d(">> flag3");
+
                 Timber.d(">> clearImage/BitmapDrawable = %s", drawable);
                 Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                if(bitmap != null && !bitmap.isRecycled()){
+                if (bitmap != null && !bitmap.isRecycled()) {
                     Timber.d(">> recycleBitmap");
 
                     bitmap.recycle();
@@ -109,6 +124,7 @@ public class GlideTestActivity extends AppCompatActivity {
 
 
                 targetImg.setImageResource(0);
+//                targetImg.destroyDrawingCache();
             } else if (drawable instanceof TransitionDrawable) {
                 Timber.d(">> /release/TransitionDrawable not recycler ");
             }
@@ -124,9 +140,40 @@ public class GlideTestActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Glide.get(this).clearMemory();
+//        clearImage();
+//        Glide.get(this).clearMemory();
         Timber.d(">> onDestroy");
-//        ImageLoader.getInstance().clearMemoryCache();
+        unbindDrawables(findViewById(R.id.content));
+        //        ImageLoader.getInstance().clearMemoryCache();
 //        ImageLoader.getInstance().clearDiskCache();
+    }
+
+    private boolean isBitmapRecycled(ImageView view) {
+        Drawable drawable = view.getDrawable();
+        view.setImageDrawable(null);
+        if (drawable != null) {
+            if (drawable instanceof BitmapDrawable) {
+                Timber.d(">> flag3");
+
+                Timber.d(">> clearImage/BitmapDrawable = %s", drawable);
+                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                return bitmap.isRecycled();
+            }
+
+        }
+        Timber.d(">> isBitmapRecycled 取不到 Bitmap");
+        return false;
+    }
+
+    private void unbindDrawables(View view) {
+        if (view.getBackground() != null) {
+            view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup && !(view instanceof AdapterView)) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                unbindDrawables(((ViewGroup) view).getChildAt(i));
+            }
+            ((ViewGroup) view).removeAllViews();
+        }
     }
 }
