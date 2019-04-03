@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -19,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.kent.tv_view_focus.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -26,6 +29,9 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,6 +85,8 @@ public class GlideTestActivity extends AppCompatActivity {
         }
     }
 
+//    private List<Bitmap> list = new ArrayList<Bitmap>();
+
 
     private void loadImage(String url) {
 //        ImageLoader imageLoader = ImageLoader.getInstance();
@@ -91,44 +99,60 @@ public class GlideTestActivity extends AppCompatActivity {
 //            }
 //        });
 
-        Picasso.get().load(url)
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .networkPolicy(NetworkPolicy.NO_CACHE)
-                .into(targetImg);
+//        Picasso.get().load(url)
+//                .memoryPolicy(MemoryPolicy.NO_CACHE)
+//                .networkPolicy(NetworkPolicy.NO_CACHE)
+//                .into(targetImg);
 
 //
-//        RequestOptions options = new RequestOptions()
-//                .centerCrop()
-//                .skipMemoryCache(true)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .priority(Priority.HIGH);
-//        Glide.with(this).load(url).apply(options).into(targetImg);
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .skipMemoryCache(true)
+//                .diskCacheStrategy(DiskCacheStrategy.R)
+                .priority(Priority.HIGH);
+
+        Glide.with(this)
+                .asBitmap()
+                .load(url)
+                .apply(options)
+                .into(targetImg);
+
+//                .into(new SimpleTarget<Bitmap>() {
+//                    @Override
+//                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//                        if(resource != null){
+//                            targetImg.setImageBitmap(resource);
+//                        }
+//                    }
+//                });
     }
 
     private void clearImage() {
         Timber.d(">> flag1");
+        Glide.with(this).clear(targetImg);
+
         Drawable drawable = targetImg.getDrawable();
-        if (drawable != null) {
-            Timber.d(">> flag2");
-
-            if (drawable instanceof BitmapDrawable) {
-                Timber.d(">> flag3");
-
-                Timber.d(">> clearImage/BitmapDrawable = %s", drawable);
-                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                if (bitmap != null && !bitmap.isRecycled()) {
-                    Timber.d(">> recycleBitmap");
-
-                    bitmap.recycle();
-                }
-
-
-                targetImg.setImageResource(0);
-//                targetImg.destroyDrawingCache();
-            } else if (drawable instanceof TransitionDrawable) {
-                Timber.d(">> /release/TransitionDrawable not recycler ");
-            }
-        }
+//        if (drawable != null) {
+//            Timber.d(">> flag2");
+//
+//            if (drawable instanceof BitmapDrawable) {
+//                Timber.d(">> flag3");
+//
+//                Timber.d(">> clearImage/BitmapDrawable = %s", drawable);
+//                Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+//                if (bitmap != null && !bitmap.isRecycled()) {
+//                    Timber.d(">> recycleBitmap");
+//
+//                    bitmap.recycle();
+//                }
+//
+//
+//                targetImg.setImageResource(0);
+////                targetImg.destroyDrawingCache();
+//            } else if (drawable instanceof TransitionDrawable) {
+//                Timber.d(">> /release/TransitionDrawable not recycler ");
+//            }
+//        }
     }
 
 
